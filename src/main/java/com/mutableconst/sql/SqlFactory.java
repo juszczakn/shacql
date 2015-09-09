@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 import com.google.common.collect.ImmutableMap;
 
 public class SqlFactory {
-    private static final Pattern nameRegex = Pattern.compile("^\\s*--\\s*name:\\s*(\\S+)");
+    private static final Pattern nameRegex = Pattern.compile("^\\s*--[\\s-]*name:\\s*(\\S+)");
     private static final String exclamation = "!";
 
     /**
