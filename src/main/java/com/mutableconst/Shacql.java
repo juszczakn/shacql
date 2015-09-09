@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 import com.mutableconst.exception.NoSuchQueryException;
+import com.mutableconst.exception.NoSuchQueryParameterException;
 import com.mutableconst.sql.NamedPreparedStatement;
 import com.mutableconst.sql.SqlFactory;
 import com.mutableconst.sql.util.SqlResult;
@@ -21,8 +22,8 @@ public class Shacql {
     }
 
     public Shacql(File sqlFile, Connection connection) throws IOException {
+        this(sqlFile);
         this.connection = connection;
-        sqlRunners = SqlFactory.createSqlRunners(sqlFile);
     }
 
     /**
@@ -32,7 +33,7 @@ public class Shacql {
      * @throws SQLException
      * @throws NoSuchQueryException
      */
-    public SqlResult execute(String name) throws SQLException, NoSuchQueryException {
+    public SqlResult execute(String name) throws NoSuchQueryException, NoSuchQueryParameterException, SQLException {
         if(connection == null) {
             throw new NoSuchElementException("No Connection provided.");
         }
@@ -47,7 +48,7 @@ public class Shacql {
      * @throws SQLException
      * @throws NoSuchQueryException
      */
-    public SqlResult execute(String name, Connection connection) throws SQLException, NoSuchQueryException {
+    public SqlResult execute(String name, Connection connection) throws NoSuchQueryException, NoSuchQueryParameterException, SQLException {
         NamedPreparedStatement namedPreparedStatement = sqlRunners.get(name);
         if(namedPreparedStatement == null) {
             throw new NoSuchQueryException("Trying to execute sql query that does not exist with name: " + name);

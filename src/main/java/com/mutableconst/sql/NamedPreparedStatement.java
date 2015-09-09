@@ -44,14 +44,14 @@ public class NamedPreparedStatement {
      * @return
      * @throws SQLException
      */
-    public SqlResult execute(Connection connection) throws SQLException {
+    public SqlResult execute(Connection connection) throws SQLException, NoSuchQueryParameterException {
         PreparedStatement preparedStatement = createPreparedStatement(connection);
         return new SqlResult(preparedStatement.execute(), null);
     }
 
-    protected PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+    protected PreparedStatement createPreparedStatement(Connection connection) throws NoSuchQueryParameterException, SQLException {
         if(indexParameterMap.size() != parameterMap.size()) {
-            throw new SQLException("Parameters supplied and required to not match");
+            throw new NoSuchQueryParameterException("Parameters supplied and required to not match");
         }
 
         PreparedStatement preparedStatement = connection.prepareStatement(unparamaterizedSql);

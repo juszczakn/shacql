@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import com.mutableconst.exception.NoSuchQueryParameterException;
 import com.mutableconst.sql.util.SqlResult;
 
 public class NamedPreparedQuery extends NamedPreparedStatement {
@@ -13,7 +14,7 @@ public class NamedPreparedQuery extends NamedPreparedStatement {
     }
 
     @Override
-    public SqlResult execute(Connection connection) throws SQLException {
+    public SqlResult execute(Connection connection) throws SQLException, NoSuchQueryParameterException {
         PreparedStatement query = createPreparedStatement(connection);
         return new SqlResult(true, query.executeQuery());
     }
