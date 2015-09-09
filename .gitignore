@@ -1,1 +1,4 @@
 *.log
+.idea
+shacql.iml
+target/
