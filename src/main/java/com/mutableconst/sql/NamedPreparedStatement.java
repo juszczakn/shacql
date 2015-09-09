@@ -1,10 +1,8 @@
 package com.mutableconst.sql;
 
-import java.io.InvalidObjectException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.Map;
 
 import com.mutableconst.exception.NoSuchQueryParameterException;
@@ -14,7 +12,6 @@ import com.mutableconst.sql.util.SqlUtils;
 public class NamedPreparedStatement {
 
     private Map<Integer, String> indexParameterMap;
-    private Map<String, Object> parameterMap = new HashMap<>();
 
     private String unparamaterizedSql;
 
@@ -24,39 +21,26 @@ public class NamedPreparedStatement {
     }
 
     /**
-     *
-     * @param parameter
-     * @param value
-     * @throws InvalidObjectException
-     */
-    public NamedPreparedStatement setParameterValue(String parameter, Object value) throws NoSuchQueryParameterException {
-        if(indexParameterMap.containsValue(parameter)) {
-            parameterMap.put(parameter, value);
-        } else {
-            throw new NoSuchQueryParameterException("Invalid Sql Parameter: " + parameter);
-        }
-        return this;
-    }
-
-    /**
      * execute this prepared sql statement against the connection
      * @param connection
      * @return
      * @throws SQLException
      */
-    public SqlResult execute(Connection connection) throws SQLException, NoSuchQueryParameterException {
-        PreparedStatement preparedStatement = createPreparedStatement(connection);
+    public SqlResult execute(Connection connection, Map<String, Object> parameters) throws SQLException, NoSuchQueryParameterException {
+        PreparedStatement preparedStatement = createPreparedStatement(connection, parameters);
         return new SqlResult(preparedStatement.execute(), null);
     }
 
-    protected PreparedStatement createPreparedStatement(Connection connection) throws NoSuchQueryParameterException, SQLException {
-        if(indexParameterMap.size() != parameterMap.size()) {
-            throw new NoSuchQueryParameterException("Parameters supplied and required to not match");
+    protected PreparedStatement createPreparedStatement(Connection connection, Map<String, Object> parameters) throws SQLException {
+        if(indexParameterMap.size() != parameters.size() || !parameters.keySet().containsAll(indexParameterMap.values())) {
+            throw new IllegalArgumentException("Parameters supplied and required do not match");
         }
 
         PreparedStatement preparedStatement = connection.prepareStatement(unparamaterizedSql);
         for(Integer idx : indexParameterMap.keySet()) {
-            preparedStatement.setObject(idx, parameterMap.get(idx));
+            String parameterName = indexParameterMap.get(idx);
+            Object parameterValue = parameters.get(parameterName);
+            preparedStatement.setObject(idx, parameterValue);
         }
 
         return preparedStatement;

@@ -3,11 +3,14 @@ package com.mutableconst.sql;
 
 import static org.testng.Assert.assertEquals;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.testng.annotations.Test;
 
-import com.mutableconst.exception.NoSuchQueryParameterException;
+import mockit.Mocked;
 
 
 @Test
@@ -30,9 +33,11 @@ public class NamedPreparedStatementTests {
         assertEquals(nameMap.get(3), "name");
     }
 
-    @Test(expectedExceptions = NoSuchQueryParameterException.class)
-    public void testTooManyParameters_throwsException() throws NoSuchQueryParameterException {
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void testTooManyParameters_throwsException(@Mocked Connection connection) throws SQLException {
         NamedPreparedQuery namedPreparedQuery = new NamedPreparedQuery(sqlString);
-        namedPreparedQuery.setParameterValue("doesNotExist", "Hello!");
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("doesNotExist", "Hello!");
+        namedPreparedQuery.execute(connection, parameters);
     }
 }

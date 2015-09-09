@@ -4,9 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
+import com.google.common.collect.Maps;
 import com.mutableconst.exception.NoSuchQueryException;
 import com.mutableconst.exception.NoSuchQueryParameterException;
 import com.mutableconst.sql.NamedPreparedStatement;
@@ -33,11 +34,23 @@ public class Shacql {
      * @throws SQLException
      * @throws NoSuchQueryException
      */
-    public SqlResult execute(String name) throws NoSuchQueryException, NoSuchQueryParameterException, SQLException {
+    public SqlResult execute(String name) throws SQLException, NoSuchQueryParameterException {
+        Map<String, Object> parameters = Maps.newHashMap();
+        return execute(name, parameters);
+    }
+
+    /**
+     * execute the given query
+     * @param name
+     * @return
+     * @throws SQLException
+     * @throws NoSuchQueryException
+     */
+    public SqlResult execute(String name, Map<String, Object> parameters) throws SQLException, NoSuchQueryParameterException {
         if(connection == null) {
-            throw new NoSuchElementException("No Connection provided.");
+            throw new IllegalArgumentException("No Connection provided.");
         }
-        return execute(name, connection);
+        return execute(connection, name, parameters);
     }
 
     /**
@@ -48,11 +61,27 @@ public class Shacql {
      * @throws SQLException
      * @throws NoSuchQueryException
      */
-    public SqlResult execute(String name, Connection connection) throws NoSuchQueryException, NoSuchQueryParameterException, SQLException {
+    public SqlResult execute(Connection connection, String name) throws SQLException, NoSuchQueryParameterException {
+        Map<String, Object> parameters = Maps.newHashMap();
+        return execute(connection, name, parameters);
+    }
+
+    /**
+     * execute the given query
+     * @param name
+     * @param connection
+     * @return
+     * @throws SQLException
+     * @throws NoSuchQueryException
+     */
+    public SqlResult execute(Connection connection, String name, Map<String, Object> parameters) throws SQLException, NoSuchQueryParameterException {
         NamedPreparedStatement namedPreparedStatement = sqlRunners.get(name);
         if(namedPreparedStatement == null) {
             throw new NoSuchQueryException("Trying to execute sql query that does not exist with name: " + name);
         }
-        return namedPreparedStatement.execute(connection);
+        if(parameters == null) {
+            parameters = new HashMap<>();
+        }
+        return namedPreparedStatement.execute(connection, parameters);
     }
 }

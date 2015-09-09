@@ -3,8 +3,8 @@ package com.mutableconst.sql;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Map;
 
-import com.mutableconst.exception.NoSuchQueryParameterException;
 import com.mutableconst.sql.util.SqlResult;
 
 public class NamedPreparedQuery extends NamedPreparedStatement {
@@ -14,8 +14,8 @@ public class NamedPreparedQuery extends NamedPreparedStatement {
     }
 
     @Override
-    public SqlResult execute(Connection connection) throws SQLException, NoSuchQueryParameterException {
-        PreparedStatement query = createPreparedStatement(connection);
+    public SqlResult execute(Connection connection, Map<String, Object> parameters) throws SQLException {
+        PreparedStatement query = createPreparedStatement(connection, parameters);
         return new SqlResult(true, query.executeQuery());
     }
 }

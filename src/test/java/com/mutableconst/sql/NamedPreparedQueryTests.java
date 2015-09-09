@@ -5,6 +5,8 @@ import static org.testng.Assert.assertTrue;
 import java.io.InvalidObjectException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.testng.annotations.Test;
 
@@ -18,20 +20,22 @@ public class NamedPreparedQueryTests {
 
     public void testExecute_correct(@Mocked final Connection connection) throws SQLException, InvalidObjectException {
         NamedPreparedQuery namedPreparedQuery = new NamedPreparedQuery(sqlString);
-        namedPreparedQuery.setParameterValue("userid", "3");
-        namedPreparedQuery.setParameterValue("id", "2");
-        namedPreparedQuery.setParameterValue("name", "Howdy");
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("userid", "3");
+        parameters.put("id", "2");
+        parameters.put("name", "Howdy");
 
-        SqlResult result = namedPreparedQuery.execute(connection);
+        SqlResult result = namedPreparedQuery.execute(connection, parameters);
         assertTrue(result.getResultSet().isPresent());
     }
 
-    @Test(expectedExceptions = SQLException.class)
-    public void testExecute_notAllParameters_throwsException(@Mocked final Connection connection) throws SQLException, InvalidObjectException {
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void testExecute_notAllParameters_throwsException(@Mocked final Connection connection) throws SQLException {
         NamedPreparedQuery namedPreparedQuery = new NamedPreparedQuery(sqlString);
-        namedPreparedQuery.setParameterValue("userid", "3");
-        namedPreparedQuery.setParameterValue("id", "2");
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("userid", "3");
+        parameters.put("id", "2");
 
-        namedPreparedQuery.execute(connection);
+        namedPreparedQuery.execute(connection, parameters);
     }
 }
