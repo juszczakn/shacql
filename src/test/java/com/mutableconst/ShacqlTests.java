@@ -1,6 +1,7 @@
 package com.mutableconst;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,11 +9,13 @@ import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.mutableconst.exception.NoSuchQueryException;
 import com.mutableconst.sql.util.SqlResult;
 
 public class ShacqlTests {
@@ -22,7 +25,7 @@ public class ShacqlTests {
     private Connection connection;
     static {
         try {
-            testFile = Paths.get(ShacqlTests.class.getResource("/tests/test.sql").toURI()).toFile();
+            testFile = Paths.get(ShacqlTests.class.getResource("/test.sql").toURI()).toFile();
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
@@ -32,14 +35,51 @@ public class ShacqlTests {
     public void setup() throws ClassNotFoundException, IllegalAccessException, InstantiationException, SQLException {
         Class.forName(driver).newInstance();
         connection = DriverManager.getConnection("jdbc:derby:memory:TestDb;create=true");
+        connection.createStatement().execute("create table test (id int not null, name varchar(20))");
+        connection.createStatement().execute("insert into test (id, name) values (1, 'test')");
     }
 
     @Test
-    public void test() throws IOException, SQLException {
-        Shacql shacql = new Shacql(testFile, connection);
-        shacql.execute("create-table!");
-        shacql.execute("insert!");
-        SqlResult sqlResult = shacql.execute("select-everything");
-        assertEquals(sqlResult.getResultSet().get().getInt(0), null);
+    public void testInsertAndSelect() throws SQLException, IOException {
+        Shacql shacql = new Shacql(testFile);
+        shacql.execute("insert!", connection);
+
+        SqlResult sqlResult = shacql.execute("select-everything", connection);
+        ResultSet rs = sqlResult.getResultSet().get();
+        rs.next();
+        rs.next();
+
+        assertTrue(sqlResult.wasSuccessful());
+        assertEquals(rs.getInt(1), 2);
+        assertEquals(rs.getString(2), "Bobby Tables");
     }
+
+    @Test
+    public void testAutoCloseResource_closesResultSet() throws Exception {
+        Shacql shacql = new Shacql(testFile);
+        ResultSet rs;
+        try(SqlResult sqlResult = shacql.execute("select-everything", connection)) {
+            rs = sqlResult.getResultSet().get();
+            rs.next();
+
+            assertEquals(rs.getInt(1), 1);
+            assertEquals(rs.getString(2), "test");
+        } catch (Exception e) {
+            throw e;
+        }
+        assertTrue(rs.isClosed());
+    }
+
+    @Test(expectedExceptions = NoSuchQueryException.class)
+    public void testNoSuchQueryExceptionThrown_ifDoesNotExist() throws IOException, SQLException {
+        Shacql shacql = new Shacql(testFile);
+        shacql.execute("no-such-query!", connection);
+    }
+
+    @Test
+    public void noNullPointerIfNullParametersGiven() throws IOException, SQLException {
+        Shacql shacql = new Shacql(testFile);
+        shacql.execute("select-everything", connection, null);
+    }
+
 }

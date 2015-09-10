@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Map;
 
-import com.mutableconst.exception.NoSuchQueryParameterException;
 import com.mutableconst.sql.util.SqlResult;
 import com.mutableconst.sql.util.SqlUtils;
 
@@ -26,9 +25,10 @@ public class NamedPreparedStatement {
      * @return
      * @throws SQLException
      */
-    public SqlResult execute(Connection connection, Map<String, Object> parameters) throws SQLException, NoSuchQueryParameterException {
+    public SqlResult execute(Connection connection, Map<String, Object> parameters) throws SQLException {
         PreparedStatement preparedStatement = createPreparedStatement(connection, parameters);
-        return new SqlResult(preparedStatement.execute(), null);
+        boolean success = preparedStatement.execute();
+        return new SqlResult(success, null, null);
     }
 
     protected PreparedStatement createPreparedStatement(Connection connection, Map<String, Object> parameters) throws SQLException {

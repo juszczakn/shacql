@@ -1,11 +1,11 @@
 package com.mutableconst.sql.util;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 public class SqlUtils {
     private static final Pattern namedParamRegex = Pattern.compile("\\s*=\\s*:([A-Za-z]+)");
@@ -16,7 +16,7 @@ public class SqlUtils {
     }
 
     public static Map<Integer, String> extractParameters(String preparedSql) {
-        Map<Integer, String> parameterMap = new HashMap<Integer, String>();
+        Map<Integer, String> parameterMap = Maps.newHashMap();
         Matcher namedParamMatcher = namedParamRegex.matcher(preparedSql);
         int currentParamIndex = 1;
         while(namedParamMatcher.find()) {

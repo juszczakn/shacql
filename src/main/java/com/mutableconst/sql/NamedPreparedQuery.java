@@ -16,6 +16,6 @@ public class NamedPreparedQuery extends NamedPreparedStatement {
     @Override
     public SqlResult execute(Connection connection, Map<String, Object> parameters) throws SQLException {
         PreparedStatement query = createPreparedStatement(connection, parameters);
-        return new SqlResult(true, query.executeQuery());
+        return new SqlResult(true, query.executeQuery(), query);
     }
 }
