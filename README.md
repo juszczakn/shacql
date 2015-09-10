@@ -1,7 +1,6 @@
 # shacql
 Easy SQL statements for Java, based on [yesql](https://github.com/krisajenkins/yesql).
 
-Shacql is still a work in progress.
 
 ## Purpose
 Shacql is meant to be an easy way to seperate your application and database
@@ -21,13 +20,23 @@ generate your SQL statements from, and wala!
     
     
     // in our Java code...
-    Shacql shacql = new Shacql("test.sql", myDbConnection);
-    shacql.execute("create-test-table!");
+    File mySqlFile = new File("/test.sql");
+    Shacql shacql = new Shacql(mySqlFile);
+    shacql.execute("create-test-table!", myDbConnection);
 
 Much like yesql, Shacql decides what to do with your query based on whether or
 not you've appended an exclamation point. An exclamation point at the end of
 a query name denotes that the statement is not a query. Likewise, if it is missing,
-Shacql will attempt to run a query and return a ResultSet.
+Shacql will attempt to run a query and return a wrapper around a ResultSet that 
+can be used in a try-with-resources.
+
+For example:
+
+    try(SqlResult sqlResult = shacql.execute("select-everything", myDbConnection, myParamters)) {
+        ResultSet rs = sqlResult.getResultSet().get();
+        rs.next();
+        ...
+    } catch(Exception e) { }
 
 ## License
 MIT
