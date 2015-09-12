@@ -1,4 +1,4 @@
-package com.mutableconst;
+package com.mutableconst.exception;
 
 import static org.testng.Assert.assertEquals;
 

@@ -8,10 +8,11 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 public class SqlUtils {
-    private static final Pattern namedParamRegex = Pattern.compile("\\s*=\\s*:([A-Za-z]+)");
+    private static final Pattern namedParamRegex = Pattern.compile("(?<!:):([A-Za-z]+)");
 
     public static String unparameterizeSql(String preparedSql) {
-        String unparameterizedSql = namedParamRegex.matcher(preparedSql).replaceAll(" = ?");
+        Matcher namedSqlMatcher = namedParamRegex.matcher(preparedSql);
+        String unparameterizedSql = namedSqlMatcher.replaceAll("?");
         return unparameterizedSql;
     }
 
