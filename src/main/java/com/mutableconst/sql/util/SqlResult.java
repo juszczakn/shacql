@@ -5,6 +5,9 @@ import java.sql.ResultSet;
 
 import com.google.common.base.Optional;
 
+/**
+ * A representation of the result of executing a SQL statement.
+ */
 public class SqlResult implements AutoCloseable {
     private final boolean success;
     private final Optional<ResultSet> resultSet;
@@ -20,10 +23,18 @@ public class SqlResult implements AutoCloseable {
         }
     }
 
+    /**
+     * SQL statement executed successfully.
+     * @return
+     */
     public boolean wasSuccessful() {
         return success;
     }
 
+    /**
+     * get the ResultSet of a query, if there was one.
+     * @return
+     */
     public Optional<ResultSet> getResultSet() {
         return resultSet;
     }

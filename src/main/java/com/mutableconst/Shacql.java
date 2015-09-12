@@ -13,6 +13,13 @@ import com.mutableconst.sql.NamedPreparedStatement;
 import com.mutableconst.sql.SqlFactory;
 import com.mutableconst.sql.util.SqlResult;
 
+/**
+ * A mapper for SQL statements that can be executed,
+ * provided via a File on initialization.
+ *
+ * Each SQL statement to be mapped must provide a
+ * name comment as documented as such: "-- name:"
+ */
 public class Shacql {
     private final Map<String, NamedPreparedStatement> sqlRunners;
 
@@ -21,7 +28,10 @@ public class Shacql {
     }
 
     /**
-     * execute the given query
+     * Execute the given SQL statement.
+     * Only to be used when the statement
+     * takes no parameters.
+     *
      * @param name
      * @param connection
      * @return
@@ -34,7 +44,8 @@ public class Shacql {
     }
 
     /**
-     * execute the given query
+     * Execute the given SQL statement.
+     *
      * @param name
      * @param connection
      * @return
