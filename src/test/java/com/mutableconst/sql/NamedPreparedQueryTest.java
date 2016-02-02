@@ -1,6 +1,6 @@
 package com.mutableconst.sql;
 
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.assertNotNull;
 
 import java.io.InvalidObjectException;
 import java.sql.Connection;
@@ -15,7 +15,7 @@ import com.mutableconst.sql.util.SqlResult;
 import mockit.Mocked;
 
 @Test
-public class NamedPreparedQueryTests {
+public class NamedPreparedQueryTest {
     private final static String sqlString = "select * from users where userid = :userid and id=:id OR name=:name::varchar";
 
     public void testExecute_correct(@Mocked final Connection connection) throws SQLException, InvalidObjectException {
@@ -26,7 +26,7 @@ public class NamedPreparedQueryTests {
         parameters.put("name", "Howdy");
 
         SqlResult result = namedPreparedQuery.execute(connection, parameters);
-        assertTrue(result.getResultSet().isPresent());
+        assertNotNull(result.getResultSet());
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)

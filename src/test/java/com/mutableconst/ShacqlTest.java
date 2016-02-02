@@ -18,14 +18,14 @@ import org.testng.annotations.Test;
 import com.mutableconst.exception.NoSuchQueryException;
 import com.mutableconst.sql.util.SqlResult;
 
-public class ShacqlTests {
-    private final String driver = "org.apache.derby.jdbc.EmbeddedDriver";
+public class ShacqlTest {
+    private static final String DRIVER = "org.apache.derby.jdbc.EmbeddedDriver";
 
     private static File testFile;
     private Connection connection;
     static {
         try {
-            testFile = Paths.get(ShacqlTests.class.getResource("/test.sql").toURI()).toFile();
+            testFile = Paths.get(ShacqlTest.class.getResource("/test.sql").toURI()).toFile();
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
@@ -33,7 +33,7 @@ public class ShacqlTests {
 
     @BeforeClass
     public void setup() throws ClassNotFoundException, IllegalAccessException, InstantiationException, SQLException {
-        Class.forName(driver).newInstance();
+        Class.forName(DRIVER).newInstance();
         connection = DriverManager.getConnection("jdbc:derby:memory:TestDb;create=true");
         connection.createStatement().execute("create table test (id int not null, name varchar(20))");
         connection.createStatement().execute("insert into test (id, name) values (1, 'test')");
@@ -45,7 +45,7 @@ public class ShacqlTests {
         shacql.execute("insert!", connection);
 
         SqlResult sqlResult = shacql.execute("select-everything", connection);
-        ResultSet rs = sqlResult.getResultSet().get();
+        ResultSet rs = sqlResult.getResultSet();
         rs.next();
         rs.next();
 
@@ -59,7 +59,7 @@ public class ShacqlTests {
         Shacql shacql = new Shacql(testFile);
         ResultSet rs;
         try(SqlResult sqlResult = shacql.execute("select-everything", connection)) {
-            rs = sqlResult.getResultSet().get();
+            rs = sqlResult.getResultSet();
             rs.next();
 
             assertEquals(rs.getInt(1), 1);
@@ -77,9 +77,8 @@ public class ShacqlTests {
     }
 
     @Test
-    public void noNullPointerIfNullParametersGiven() throws IOException, SQLException {
+    public void parametersAreOptional() throws IOException, SQLException {
         Shacql shacql = new Shacql(testFile);
-        shacql.execute("select-everything", connection, null);
+        shacql.execute("select-everything", connection);
     }
-
 }

@@ -14,7 +14,7 @@ import mockit.Mocked;
 
 
 @Test
-public class NamedPreparedStatementTests {
+public class NamedPreparedStatementTest {
     private final static String sqlString = "select * from users where userid = :userid " +
             "and id=:id OR name=:name::varchar AND isNull(:test)";
 
