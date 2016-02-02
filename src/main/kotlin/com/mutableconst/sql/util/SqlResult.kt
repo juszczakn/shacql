@@ -1,5 +1,6 @@
 package com.mutableconst.sql.util
 
+import java.io.Closeable
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 
@@ -8,7 +9,7 @@ import java.sql.ResultSet
  */
 public class SqlResult(val success: Boolean,
                        val resultSet: ResultSet?,
-                       val preparedStatementToBeClosed: PreparedStatement?) : AutoCloseable {
+                       val preparedStatementToBeClosed: PreparedStatement?) : AutoCloseable, Closeable {
     /**
      * SQL statement executed successfully.
      * @return
