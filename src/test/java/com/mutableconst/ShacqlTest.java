@@ -18,14 +18,14 @@ import org.testng.annotations.Test;
 import com.mutableconst.exception.NoSuchQueryException;
 import com.mutableconst.sql.util.SqlResult;
 
-public class ShacqlTests {
+public class ShacqlTest {
     private static final String DRIVER = "org.apache.derby.jdbc.EmbeddedDriver";
 
     private static File testFile;
     private Connection connection;
     static {
         try {
-            testFile = Paths.get(ShacqlTests.class.getResource("/test.sql").toURI()).toFile();
+            testFile = Paths.get(ShacqlTest.class.getResource("/test.sql").toURI()).toFile();
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }

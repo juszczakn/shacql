@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.testng.annotations.Test;
 
-public class SqlUtilsTests {
+public class SqlUtilsTest {
     @Test
     public void testReplacingVars() {
         String sql = ":id =:id::int (:id)";

@@ -17,7 +17,7 @@ import java.util.*
  * Each SQL statement to be mapped must provide a
  * name comment as documented as such: "-- name:"
  */
-public class Shacql(sqlFile: File) {
+public class Shacql(val sqlFile: File) {
     private val sqlRunners: Map<String, NamedPreparedStatement>
 
     init {

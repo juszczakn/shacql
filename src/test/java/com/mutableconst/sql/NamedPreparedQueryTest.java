@@ -15,7 +15,7 @@ import com.mutableconst.sql.util.SqlResult;
 import mockit.Mocked;
 
 @Test
-public class NamedPreparedQueryTests {
+public class NamedPreparedQueryTest {
     private final static String sqlString = "select * from users where userid = :userid and id=:id OR name=:name::varchar";
 
     public void testExecute_correct(@Mocked final Connection connection) throws SQLException, InvalidObjectException {
